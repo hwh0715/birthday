@@ -108,6 +108,10 @@ video{display:block;width:100%;height:auto;border-radius:20px}
 .play-overlay:hover .icon{transform:scale(1.1)}
 .play-overlay .txt{margin-top:1rem;color:#e8f4ff;font-size:1rem;letter-spacing:2px;font-weight:600}
 .hint{display:block;margin-top:.8rem;font-size:.9rem;color:#9cbedb;font-style:italic}
+.end-msg{max-height:0;overflow:hidden;transition:all .8s ease-out;text-align:center;opacity:0;margin-top:0}
+.end-msg.show{max-height:200px;opacity:1;margin-top:1.5rem}
+.end-msg .end-line1{font-family:'Great Vibes',cursive;font-size:2rem;color:#ffd6e0;text-shadow:0 0 20px #ff6b8b,0 0 40px #ff3b70;line-height:1.4;margin-bottom:.6rem}
+.end-msg .end-line2{font-size:1.2rem;color:#ff9eb5;letter-spacing:2px}
 .nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
 .nav-btn{flex:1;min-width:110px;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:linear-gradient(135deg,rgba(80,160,255,.25),rgba(45,122,255,.15));border:1px solid rgba(150,210,255,.5);border-radius:60px;padding:.8rem 1.5rem;cursor:pointer;transition:all .3s;color:#e8f4ff;font-size:.9rem;font-weight:600;text-decoration:none}
 .nav-btn:hover{background:linear-gradient(135deg,rgba(80,160,255,.5),rgba(45,122,255,.35));transform:translateY(-2px);box-shadow:0 10px 25px rgba(60,140,255,.5)}
@@ -115,7 +119,7 @@ video{display:block;width:100%;height:auto;border-radius:20px}
 @keyframes balloonRise{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-400px) scale(1.3)}}
 .floating-heart{position:fixed;color:rgba(120,190,255,.35);font-size:2rem;user-select:none;pointer-events:none;animation:floatUp 12s infinite linear;z-index:1}
 @keyframes floatUp{0%{transform:translateY(100vh) rotate(0);opacity:0}10%{opacity:.6}90%{opacity:.6}100%{transform:translateY(-20vh) rotate(360deg);opacity:0}}
-@media(max-width:600px){.title{font-size:2.2rem}.nav-btn{font-size:.85rem}.play-overlay .icon{width:64px;height:64px;font-size:1.6rem}}
+@media(max-width:600px){.title{font-size:2.2rem}.nav-btn{font-size:.85rem}.play-overlay .icon{width:64px;height:64px;font-size:1.6rem}.end-msg .end-line1{font-size:1.6rem}}
 </style>
 </head>
 <body>
@@ -138,6 +142,11 @@ video{display:block;width:100%;height:auto;border-radius:20px}
 </div>
 </div>
 <span class="hint" id="hint">这是我剪的游戏视频</span>
+
+<div class="end-msg" id="endMsg">
+<div class="end-line1">这就是我让你改备注的原因</div>
+<div class="end-line2">嘻嘻 😜</div>
+</div>
 
 <div class="nav">
 <a href="page7.html" class="nav-btn">← 上一页</a>
@@ -201,7 +210,9 @@ video{display:block;width:100%;height:auto;border-radius:20px}
 
     video.addEventListener('ended', function(){
         overlay.classList.remove('hide');
-        hint.textContent = '这是我剪的游戏视频';
+        hint.textContent = '—— 看完了 ——';
+        document.getElementById('endMsg').classList.add('show');
+        window.logAction('视频看完，看到彩蛋');
     });
 
     video.addEventListener('pause', function(){
