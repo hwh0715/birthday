@@ -45,35 +45,24 @@
     }
     window.logAction = function(action, page, extra){
         try {
-            var body = {
-                action: action,
-                page: page || location.pathname,
-                device: navigator.userAgent.substring(0, 80),
-                device_type: getDeviceType()
-            };
-            if(extra && extra.message){ body.message_text = extra.message; }
-            if(extra && extra.duration !== undefined){ body.duration_seconds = extra.duration; }
-            fetch(SUPABASE_URL + '/rest/v1/logs', {
-                method: 'POST',
-                keepalive: true,
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify(body)
-            }).catch(function(){});
+            var params = new URLSearchParams();
+            params.append('action', action || '');
+            params.append('page', page || location.pathname);
+            params.append('device', navigator.userAgent.substring(0, 80));
+            params.append('device_type', getDeviceType());
+            if(extra && extra.message){ params.append('message_text', extra.message); }
+            if(extra && extra.duration !== undefined){ params.append('duration_seconds', extra.duration); }
+            navigator.sendBeacon(
+                SUPABASE_URL + '/rest/v1/logs?apikey=' + SUPABASE_KEY,
+                params
+            );
         } catch(e){}
     };
     window.logAction('打开页面');
     var enterTime = Date.now();
     window.addEventListener('beforeunload', function(){
         var duration = Math.round((Date.now() - enterTime) / 1000);
-        try {
-            var data = JSON.stringify({action: '离开页面', page: location.pathname, duration_seconds: duration, device_type: getDeviceType()});
-            navigator.sendBeacon(SUPABASE_URL + '/rest/v1/logs?apikey=' + SUPABASE_KEY, new Blob([data], {type: 'application/json'}));
-        } catch(e){}
+        window.logAction('离开页面', location.pathname, {duration: duration});
     });
     var hidden = false;
     document.addEventListener('visibilitychange', function(){
